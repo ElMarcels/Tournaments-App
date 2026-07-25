@@ -1,20 +1,26 @@
-// web/app/layout.tsx
-import "../styles/globals.css";
-import { Inter } from "next/font/google";
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import '@/styles/globals.css'
+import Navbar from '@/components/Navbar'
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-  title: "TournamentHub",
-  description: "Global platform for managing esports tournaments.",
-};
+export const metadata: Metadata = {
+  title: 'TournamentHub',
+  description: 'Global platform for managing esports tournaments',
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" className="min-h-screen bg-gray-900 text-white">
-      <body className={`${inter.className} antialiased`}>
+    <html lang="en">
+      <body className={`${inter.className} bg-[#0a0a0f] text-white`}>
+        <Navbar />
         {children}
       </body>
     </html>
-  );
+  )
 }
