@@ -1,0 +1,32 @@
+/* web/styles/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom theme definitions based on esports aesthetics (Black, Purple, Electric Blue) */
+:root {
+  --color-primary: #8b5cf6; /* Violet-500 */
+  --color-secondary: #3b82f6; /* Blue-500 - for accents */
+  --color-bg-dark: #0a0a1a; /* Deep dark background */
+  --color-card-dark: #111827; /* Gray-900 or similar, making cards pop on black bg */
+}
+
+body {
+  background-color: var(--color-bg-dark);
+  color: white;
+}
+
+.btn-primary {
+  @apply px-6 py-3 rounded-md font-semibold transition duration-200 shadow-lg 
+          transform hover:scale-[1.02] active:scale-[0.98];
+}
+
+/* Button styling based on primary/secondary colors */
+.btn-primary-violet {
+    @apply text-white bg-purple-600 hover:bg-purple-700 focus:ring-purple-500/50;
+}
+
+.btn-outline-blue {
+    @apply border-2 border-blue-500 text-blue-400 hover:bg-blue-900/30;
+}
