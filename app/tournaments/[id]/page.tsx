@@ -1,3 +1,4 @@
+import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import JoinTournamentButton from './JoinTournamentButton'
 
@@ -10,9 +11,7 @@ export default async function TournamentDetailPage({
   let tournament: any = null
 
   try {
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
-
     const result = await supabase
       .from('tournaments')
       .select(`

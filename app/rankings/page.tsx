@@ -1,9 +1,10 @@
+import { createClient } from '@/lib/supabase/server'
+
 export default async function RankingsPage() {
   let rankings: any[] = []
   let error: any = null
 
   try {
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const { data, error: rpcError } = await supabase.rpc('get_global_rankings')
     rankings = data?.rankings || []

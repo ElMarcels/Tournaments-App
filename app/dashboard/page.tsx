@@ -1,3 +1,4 @@
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
@@ -7,7 +8,6 @@ export default async function DashboardPage() {
   let notifications: any[] = []
 
   try {
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const { data: { user: authUser } } = await supabase.auth.getUser()
     user = authUser

@@ -1,11 +1,11 @@
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 import Button from '@/components/Button'
 
 export default async function Home() {
   let user = null
 
   try {
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const { data } = await supabase.auth.getUser()
     user = data.user

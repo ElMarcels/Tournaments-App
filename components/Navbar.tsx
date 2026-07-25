@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 import LogoutButton from './LogoutButton'
 
 export default async function Navbar() {
@@ -6,7 +7,6 @@ export default async function Navbar() {
   let profile = null
 
   try {
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const { data } = await supabase.auth.getUser()
     user = data.user
