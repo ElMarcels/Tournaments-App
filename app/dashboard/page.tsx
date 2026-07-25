@@ -1,34 +1,47 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let user: any = null
+  let profile: any = null
+  let myParticipations: any[] = []
+  let notifications: any[] = []
 
-  if (!user) {
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const supabase = await createClient()
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    user = authUser
+
+    if (!user) {
+      redirect('/login')
+    }
+
+    const { data: profileData } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+    profile = profileData
+
+    const { data: participations } = await supabase
+      .from('tournament_participants')
+      .select(`
+        *,
+        tournament:tournaments(id, name, game, status, format)
+      `)
+      .eq('user_id', user.id)
+    myParticipations = participations || []
+
+    const { data: notifs } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10)
+    notifications = notifs || []
+  } catch {
     redirect('/login')
   }
-
-  const { data: profile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-
-  const { data: myParticipations } = await supabase
-    .from('tournament_participants')
-    .select(`
-      *,
-      tournament:tournaments(id, name, game, status, format)
-    `)
-    .eq('user_id', user.id)
-
-  const { data: notifications } = await supabase
-    .from('notifications')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(10)
 
   return (
     <main className="min-h-screen p-8">

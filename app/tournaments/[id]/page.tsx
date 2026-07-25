@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import JoinTournamentButton from './JoinTournamentButton'
 
@@ -8,26 +7,34 @@ export default async function TournamentDetailPage({
   params: { id: string }
 }) {
   const { id } = params
-  const supabase = await createClient()
+  let tournament: any = null
 
-  const { data: tournament, error } = await supabase
-    .from('tournaments')
-    .select(`
-      *,
-      tournament_participants(
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const supabase = await createClient()
+
+    const result = await supabase
+      .from('tournaments')
+      .select(`
         *,
-        user:users(id, username, avatar_url)
-      ),
-      matches(*)
-    `)
-    .eq('id', id)
-    .single()
+        tournament_participants(
+          *,
+          user:users(id, username, avatar_url)
+        ),
+        matches(*)
+      `)
+      .eq('id', id)
+      .single()
 
-  if (error || !tournament) {
+    if (result.error || !result.data) {
+      notFound()
+    }
+
+    tournament = result.data
+  } catch {
     notFound()
   }
 
-  const { data: { user } } = await supabase.auth.getUser()
   const participantCount = tournament.tournament_participants?.length || 0
 
   return (
@@ -83,9 +90,7 @@ export default async function TournamentDetailPage({
             </div>
           </div>
 
-          {user && tournament.status === 'OPEN' && participantCount < tournament.max_teams && (
-            <JoinTournamentButton tournamentId={tournament.id} />
-          )}
+          <JoinTournamentButton tournamentId={tournament.id} />
         </div>
 
         <div className="bg-[#12121a] border border-gray-800 rounded-xl p-8">

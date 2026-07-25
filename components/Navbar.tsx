@@ -1,19 +1,26 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
 import LogoutButton from './LogoutButton'
 
 export default async function Navbar() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
+  let user = null
   let profile = null
-  if (user) {
-    const { data } = await supabase
-      .from('users')
-      .select('username, avatar_url, user_role')
-      .eq('id', user.id)
-      .single()
-    profile = data
+
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const supabase = await createClient()
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+
+    if (user) {
+      const { data: profileData } = await supabase
+        .from('users')
+        .select('username, avatar_url, user_role')
+        .eq('id', user.id)
+        .single()
+      profile = profileData
+    }
+  } catch {
+    // Supabase not configured or tables don't exist yet
   }
 
   return (

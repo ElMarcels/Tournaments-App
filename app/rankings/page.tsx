@@ -1,11 +1,16 @@
-import { createClient } from '@/lib/supabase/server'
-
 export default async function RankingsPage() {
-  const supabase = await createClient()
+  let rankings: any[] = []
+  let error: any = null
 
-  const { data, error } = await supabase.rpc('get_global_rankings')
-
-  const rankings = data?.rankings || []
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const supabase = await createClient()
+    const { data, error: rpcError } = await supabase.rpc('get_global_rankings')
+    rankings = data?.rankings || []
+    error = rpcError
+  } catch (e: any) {
+    error = { message: e.message || 'Failed to connect to database' }
+  }
 
   return (
     <main className="min-h-screen p-8">

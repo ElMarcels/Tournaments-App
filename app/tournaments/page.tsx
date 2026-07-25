@@ -3,15 +3,24 @@ import TournamentCard from '@/components/TournamentCard'
 import Link from 'next/link'
 
 export default async function TournamentsPage() {
-  const supabase = await createClient()
+  let tournaments: any[] = []
+  let error: any = null
 
-  const { data: tournaments, error } = await supabase
-    .from('tournaments')
-    .select(`
-      *,
-      tournament_participants(count)
-    `)
-    .order('created_at', { ascending: false })
+  try {
+    const supabase = await createClient()
+    const result = await supabase
+      .from('tournaments')
+      .select(`
+        *,
+        tournament_participants(count)
+      `)
+      .order('created_at', { ascending: false })
+
+    tournaments = result.data || []
+    error = result.error
+  } catch (e: any) {
+    error = { message: e.message || 'Failed to connect to database' }
+  }
 
   return (
     <main className="min-h-screen p-8">

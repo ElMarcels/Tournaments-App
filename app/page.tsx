@@ -1,10 +1,17 @@
-import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Button from '@/components/Button'
 
 export default async function Home() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = null
+
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const supabase = await createClient()
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {
+    // Supabase not configured
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8">
