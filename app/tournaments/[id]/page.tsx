@@ -5,9 +5,9 @@ import JoinTournamentButton from './JoinTournamentButton'
 export default async function TournamentDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = await params
+  const { id } = params
   const supabase = await createClient()
 
   const { data: tournament, error } = await supabase
